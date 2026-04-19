@@ -1,9 +1,8 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Affectation } from '../../../models/affectation';
-import { User } from '../../../models/user';
-import { Project } from '../../../models/project';
 import { ApiService } from 'src/services/api.service';
+import { forkJoin } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -20,8 +19,6 @@ export class AffectationsComponent implements OnInit {
 
       dataSource: MatTableDataSource<Affectation> = new MatTableDataSource();
 
-      users: User[] = [];
-      projects: Project[] = [];
       userNameById: Record<string, string> = {};
       projectNameById: Record<string, string> = {};
     
@@ -47,28 +44,28 @@ export class AffectationsComponent implements OnInit {
     
       ngOnInit(): void {
         this.loadLookups();
-        this.fetchAll();
       }
 
       loadLookups() {
-        this.apiService.getUsers().subscribe((users) => {
-          this.users = users;
+        forkJoin({
+          users: this.apiService.getUsers(),
+          projects: this.apiService.getProjects(),
+        }).subscribe(({ users, projects }) => {
           this.userNameById = users.reduce((acc, user) => {
             if (user.id) {
               acc[user.id] = user.name;
             }
             return acc;
           }, {} as Record<string, string>);
-        });
 
-        this.apiService.getProjects().subscribe((projects) => {
-          this.projects = projects;
           this.projectNameById = projects.reduce((acc, project) => {
             if (project.id) {
               acc[project.id] = project.name;
             }
             return acc;
           }, {} as Record<string, string>);
+
+          this.fetchAll();
         });
       }
     
