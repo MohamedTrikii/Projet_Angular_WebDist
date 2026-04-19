@@ -57,7 +57,8 @@ export class AffectationsComponent implements OnInit {
 
             this.fetchAll();
           },
-          error: () => {
+          error: (error) => {
+            console.warn('Failed to load user/project lookups; showing IDs.', error);
             this.fetchAll();
           },
         });
@@ -79,12 +80,12 @@ export class AffectationsComponent implements OnInit {
       }
 
       private buildNameLookup(items: Array<{ id?: string; name: string }>) {
-        return items.reduce((acc, item) => {
-          if (item.id) {
+        return items
+          .filter((item): item is { id: string; name: string } => Boolean(item.id))
+          .reduce((acc, item) => {
             acc[item.id] = item.name;
-          }
-          return acc;
-        }, {} as Record<string, string>);
+            return acc;
+          }, {} as Record<string, string>);
       }
     
       deleteAffectation(id: string) {
