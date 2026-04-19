@@ -1,0 +1,20 @@
+<div class="login-wrapper">
+
+  <div class="login-box">
+
+    <h1>Admin Portal</h1>
+    <p>Login to continue</p>
+
+    <form [formGroup]="form" (ngSubmit)="login()">
+
+      <input type="text" placeholder="Username" formControlName="username">
+
+      <input type="password" placeholder="Password" formControlName="password">
+
+      <button type="submit">Login</button>
+
+    </form>
+
+  </div>
+
+</div>

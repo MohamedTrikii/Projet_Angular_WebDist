@@ -1,0 +1,41 @@
+<!-- Formulaire de création/modification d'affectation -->
+<h2 mat-dialog-title>{{ data ? 'Modifier' : 'Créer' }} Affectation</h2>
+
+<form [formGroup]="assignmentForm" (ngSubmit)="onSubmit()">
+
+  <!-- Sélection de l'employé -->
+  <mat-form-field appearance="fill">
+    <mat-label>Employé</mat-label>
+    <mat-select formControlName="userId">
+      <mat-option *ngFor="let u of users" [value]="u.id">{{ u.name }} ({{ u.email }})</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Sélection du projet -->
+  <mat-form-field appearance="fill">
+    <mat-label>Projet</mat-label>
+    <mat-select formControlName="projectId">
+      <mat-option *ngFor="let p of projects" [value]="p.id">{{ p.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Date de début -->
+  <mat-form-field appearance="fill">
+    <mat-label>Date début</mat-label>
+    <input matInput [matDatepicker]="pickerStart" formControlName="start">
+    <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+    <mat-datepicker #pickerStart></mat-datepicker>
+  </mat-form-field>
+
+  <!-- Date de fin -->
+  <mat-form-field appearance="fill">
+    <mat-label>Date fin</mat-label>
+    <input matInput [matDatepicker]="pickerEnd" formControlName="end">
+    <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+    <mat-datepicker #pickerEnd></mat-datepicker>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="assignmentForm.invalid">
+    {{ data ? 'Modifier' : 'Créer' }}
+  </button>
+</form>

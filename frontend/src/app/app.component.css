@@ -1,0 +1,68 @@
+.app-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #0f172a;
+  transition: all 0.3s ease-in-out; /* Makes the "slide" smooth */
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+/* This class is applied when isDrawerOpen is false */
+.sidebar.collapsed {
+  width: 0;
+  padding: 0;
+  margin-left: -260px; /* Slides it completely off-screen */
+  opacity: 0;
+}
+
+.main-content {
+  flex-grow: 1;
+  transition: margin 0.3s ease-in-out; /* Content expands smoothly */
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.page-content {
+  padding: 24px;
+}
+
+/* Optional: Style for the toggle buttons */
+.toggle-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f8fafc;
+}
+
+/* Ensure app-shell only styles when it exists */
+.app-shell {
+  display: flex;
+  height: 100vh;
+}

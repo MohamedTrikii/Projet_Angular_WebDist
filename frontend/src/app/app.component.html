@@ -1,0 +1,15 @@
+<div *ngIf="authService.isLoggedIn(); else loginView" class="app-shell">
+  
+  <section class="main-content">
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
+  </section>
+
+</div>
+
+<ng-template #loginView>
+  <div class="login-container">
+    <router-outlet></router-outlet>
+  </div>
+</ng-template>
