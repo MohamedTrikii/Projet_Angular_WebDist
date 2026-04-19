@@ -52,19 +52,8 @@ export class AffectationsComponent implements OnInit {
           projects: this.apiService.getProjects(),
         }).subscribe({
           next: ({ users, projects }) => {
-            this.userNamesById = users.reduce((acc, user) => {
-              if (user.id) {
-                acc[user.id] = user.name;
-              }
-              return acc;
-            }, {} as Record<string, string>);
-
-            this.projectNamesById = projects.reduce((acc, project) => {
-              if (project.id) {
-                acc[project.id] = project.name;
-              }
-              return acc;
-            }, {} as Record<string, string>);
+            this.userNamesById = this.buildNameLookup(users);
+            this.projectNamesById = this.buildNameLookup(projects);
 
             this.fetchAll();
           },
@@ -87,6 +76,15 @@ export class AffectationsComponent implements OnInit {
 
       getProjectName(projectId: string) {
         return this.projectNamesById[projectId] ?? projectId;
+      }
+
+      private buildNameLookup(items: Array<{ id?: string; name: string }>) {
+        return items.reduce((acc, item) => {
+          if (item.id) {
+            acc[item.id] = item.name;
+          }
+          return acc;
+        }, {} as Record<string, string>);
       }
     
       deleteAffectation(id: string) {
