@@ -19,6 +19,11 @@ export class AffectationsComponent implements OnInit {
   displayedColumns: string[] = ['id', 'userId', 'projectId', 'start', 'end', 'actions'];
 
       dataSource: MatTableDataSource<Affectation> = new MatTableDataSource();
+
+      users: User[] = [];
+      projects: Project[] = [];
+      userNameById: Record<string, string> = {};
+      projectNameById: Record<string, string> = {};
     
       @ViewChild(MatPaginator) paginator!: MatPaginator;
       @ViewChild(MatSort) sort!: MatSort;
@@ -41,7 +46,30 @@ export class AffectationsComponent implements OnInit {
       }
     
       ngOnInit(): void {
+        this.loadLookups();
         this.fetchAll();
+      }
+
+      loadLookups() {
+        this.apiService.getUsers().subscribe((users) => {
+          this.users = users;
+          this.userNameById = users.reduce((acc, user) => {
+            if (user.id) {
+              acc[user.id] = user.name;
+            }
+            return acc;
+          }, {} as Record<string, string>);
+        });
+
+        this.apiService.getProjects().subscribe((projects) => {
+          this.projects = projects;
+          this.projectNameById = projects.reduce((acc, project) => {
+            if (project.id) {
+              acc[project.id] = project.name;
+            }
+            return acc;
+          }, {} as Record<string, string>);
+        });
       }
     
       fetchAll() {
@@ -49,6 +77,14 @@ export class AffectationsComponent implements OnInit {
         this.apiService.getAffectations().subscribe((data) => {
           this.dataSource.data = data;
         });
+      }
+
+      getUserName(userId: string) {
+        return this.userNameById[userId] ?? userId;
+      }
+
+      getProjectName(projectId: string) {
+        return this.projectNameById[projectId] ?? projectId;
       }
     
       deleteAffectation(id: string) {
