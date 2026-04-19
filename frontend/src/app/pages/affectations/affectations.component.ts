@@ -19,8 +19,8 @@ export class AffectationsComponent implements OnInit {
 
       dataSource: MatTableDataSource<Affectation> = new MatTableDataSource();
 
-      userNameById: Record<string, string> = {};
-      projectNameById: Record<string, string> = {};
+      userNamesById: Record<string, string> = {};
+      projectNamesById: Record<string, string> = {};
     
       @ViewChild(MatPaginator) paginator!: MatPaginator;
       @ViewChild(MatSort) sort!: MatSort;
@@ -50,22 +50,27 @@ export class AffectationsComponent implements OnInit {
         forkJoin({
           users: this.apiService.getUsers(),
           projects: this.apiService.getProjects(),
-        }).subscribe(({ users, projects }) => {
-          this.userNameById = users.reduce((acc, user) => {
-            if (user.id) {
-              acc[user.id] = user.name;
-            }
-            return acc;
-          }, {} as Record<string, string>);
+        }).subscribe({
+          next: ({ users, projects }) => {
+            this.userNamesById = users.reduce((acc, user) => {
+              if (user.id) {
+                acc[user.id] = user.name;
+              }
+              return acc;
+            }, {} as Record<string, string>);
 
-          this.projectNameById = projects.reduce((acc, project) => {
-            if (project.id) {
-              acc[project.id] = project.name;
-            }
-            return acc;
-          }, {} as Record<string, string>);
+            this.projectNamesById = projects.reduce((acc, project) => {
+              if (project.id) {
+                acc[project.id] = project.name;
+              }
+              return acc;
+            }, {} as Record<string, string>);
 
-          this.fetchAll();
+            this.fetchAll();
+          },
+          error: () => {
+            this.fetchAll();
+          },
         });
       }
     
@@ -77,11 +82,11 @@ export class AffectationsComponent implements OnInit {
       }
 
       getUserName(userId: string) {
-        return this.userNameById[userId] ?? userId;
+        return this.userNamesById[userId] ?? userId;
       }
 
       getProjectName(projectId: string) {
-        return this.projectNameById[projectId] ?? projectId;
+        return this.projectNamesById[projectId] ?? projectId;
       }
     
       deleteAffectation(id: string) {
