@@ -1,4 +1,4 @@
-﻿package org.example.tp_servlet;
+package org.example.tp_servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -50,7 +50,6 @@ public class UtilisateurApiServlet extends HttpServlet {
 
         String body = JsonHelper.readBody(request);
         Utilisateur u = new Utilisateur();
-        u.setId(UtilisateurDAO.compteur);
         u.setNom(JsonHelper.getField(body, "name"));
         u.setEmail(JsonHelper.getField(body, "email"));
         u.setPassword(JsonHelper.getField(body, "password"));
@@ -81,6 +80,7 @@ public class UtilisateurApiServlet extends HttpServlet {
             if (pwd != null && !pwd.isEmpty()) u.setPassword(pwd);
             u.setRole(JsonHelper.getField(body, "role"));
             u.setCategory(JsonHelper.getField(body, "category"));
+            UtilisateurDAO.modifier(u);
             response.getWriter().print(toJson(u));
         } else {
             response.setStatus(404);

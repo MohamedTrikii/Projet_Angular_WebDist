@@ -1,8 +1,12 @@
-<button mat-raised-button color="primary" (click)="create()">Add Category</button>
+<div style="display: flex; flex-direction: row; justify-content: flex-end; align-items: center;">
+    <button mat-raised-button color="primary" (click)="create()">
+        Create New Category
+    </button>
+</div>
 
 <mat-form-field>
     <mat-label>Filter</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. HR" #input>
 </mat-form-field>
 
 <div class="mat-elevation-z8">
@@ -22,7 +26,7 @@
 
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
                 <button mat-icon-button (click)="openEdit(element.id)">
                     <mat-icon>edit</mat-icon>

@@ -34,6 +34,7 @@ public class ModifierAffectationServlet extends HttpServlet {
         a.setProjetId(Integer.parseInt(request.getParameter("projetId")));
         a.setDateDebut(request.getParameter("dateDebut"));
         a.setDateFin(request.getParameter("dateFin"));
+        AffectationDAO.modifier(a);
         response.sendRedirect("liste-affectations.jsp");
     }
 }

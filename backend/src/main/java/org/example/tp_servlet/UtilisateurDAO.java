@@ -1,37 +1,51 @@
-package org.example.tp_servlet;
+﻿package org.example.tp_servlet;
 
-import java.util.ArrayList;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import java.util.List;
 
-/**
- * DAO statique pour gérer les opérations CRUD sur les utilisateurs.
- * Stockage en mémoire (liste statique).
- */
 public class UtilisateurDAO {
-    private static List<Utilisateur> utilisateurs = new ArrayList<>();
-    static int compteur = 0;
+    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("tp_pu");
 
-    /** Ajouter un utilisateur à la liste */
     public static void ajouter(Utilisateur u) {
-        utilisateurs.add(u);
-        compteur++;
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(u);
+        em.getTransaction().commit();
+        em.close();
     }
 
-    /** Récupérer tous les utilisateurs */
     public static List<Utilisateur> findAll() {
-        return utilisateurs;
+        EntityManager em = emf.createEntityManager();
+        List<Utilisateur> list = em.createQuery("SELECT u FROM Utilisateur u", Utilisateur.class).getResultList();
+        em.close();
+        return list;
     }
 
-    /** Supprimer un utilisateur par son id */
     public static void supprimer(int id) {
-        utilisateurs.removeIf(u -> u.getId() == id);
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        Utilisateur u = em.find(Utilisateur.class, id);
+        if (u != null) {
+            em.remove(u);
+        }
+        em.getTransaction().commit();
+        em.close();
     }
 
-    /** Récupérer un utilisateur par son id */
     public static Utilisateur get(int id) {
-        for (Utilisateur u : utilisateurs) {
-            if (u.getId() == id) return u;
-        }
-        return null;
+        EntityManager em = emf.createEntityManager();
+        Utilisateur u = em.find(Utilisateur.class, id);
+        em.close();
+        return u;
+    }
+    
+    public static void modifier(Utilisateur u) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.merge(u);
+        em.getTransaction().commit();
+        em.close();
     }
 }

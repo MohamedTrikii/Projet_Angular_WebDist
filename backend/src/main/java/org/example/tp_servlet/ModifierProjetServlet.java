@@ -32,6 +32,7 @@ public class ModifierProjetServlet extends HttpServlet {
         p.setNom(request.getParameter("nom"));
         p.setDescription(request.getParameter("description"));
         p.setCategorieId(Integer.parseInt(request.getParameter("categorieId")));
+        ProjetDAO.modifier(p);
         response.sendRedirect("liste-projets.jsp");
     }
 }

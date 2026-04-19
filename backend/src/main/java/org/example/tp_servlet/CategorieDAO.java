@@ -1,37 +1,51 @@
-package org.example.tp_servlet;
+﻿package org.example.tp_servlet;
 
-import java.util.ArrayList;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import java.util.List;
 
-/**
- * DAO statique pour gérer les opérations CRUD sur les catégories.
- * Stockage en mémoire (liste statique).
- */
 public class CategorieDAO {
-    private static List<Categorie> categories = new ArrayList<>();
-    static int compteur = 0;
+    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("tp_pu");
 
-    /** Ajouter une catégorie */
     public static void ajouter(Categorie c) {
-        categories.add(c);
-        compteur++;
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(c);
+        em.getTransaction().commit();
+        em.close();
     }
 
-    /** Récupérer toutes les catégories */
     public static List<Categorie> findAll() {
-        return categories;
+        EntityManager em = emf.createEntityManager();
+        List<Categorie> list = em.createQuery("SELECT c FROM Categorie c", Categorie.class).getResultList();
+        em.close();
+        return list;
     }
 
-    /** Supprimer une catégorie par son id */
     public static void supprimer(int id) {
-        categories.removeIf(c -> c.getId() == id);
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        Categorie c = em.find(Categorie.class, id);
+        if (c != null) {
+            em.remove(c);
+        }
+        em.getTransaction().commit();
+        em.close();
     }
 
-    /** Récupérer une catégorie par son id */
     public static Categorie get(int id) {
-        for (Categorie c : categories) {
-            if (c.getId() == id) return c;
-        }
-        return null;
+        EntityManager em = emf.createEntityManager();
+        Categorie c = em.find(Categorie.class, id);
+        em.close();
+        return c;
+    }
+
+    public static void modifier(Categorie c) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.merge(c);
+        em.getTransaction().commit();
+        em.close();
     }
 }

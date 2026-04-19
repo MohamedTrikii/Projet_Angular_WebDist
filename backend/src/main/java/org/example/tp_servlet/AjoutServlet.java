@@ -17,7 +17,7 @@ public class AjoutServlet extends HttpServlet {
         String prenom = request.getParameter("prenom");
         String email = request.getParameter("email");
 
-        Personne p = new Personne(PersonneDAO.compteur, nom, prenom, email);
+        Personne p = new Personne(0, nom, prenom, email);
 
         PersonneDAO.ajouter(p);
 

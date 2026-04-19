@@ -17,7 +17,7 @@ public class AjoutCategorieServlet extends HttpServlet {
         String nom = request.getParameter("nom");
         String description = request.getParameter("description");
 
-        Categorie c = new Categorie(CategorieDAO.compteur, nom, description);
+        Categorie c = new Categorie(0, nom, description);
         CategorieDAO.ajouter(c);
 
         response.sendRedirect("liste-categories.jsp");

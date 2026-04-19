@@ -1,0 +1,21 @@
+{
+  "members": [
+    {
+      "id": "b196",
+      "cin": "11111111",
+      "name": "MMMMMMmm",
+      "type": "AAAAAaa",
+      "createdDate": "202020"
+    }
+  ],
+
+"Evts": [
+  {
+    "id": "aaaa",
+    "titre": "bbbb",
+    "dateDebut": "20_03_2026",
+    "dateFin": "25_03_2026",
+    "lieu": "sfax"
+  }
+]
+}

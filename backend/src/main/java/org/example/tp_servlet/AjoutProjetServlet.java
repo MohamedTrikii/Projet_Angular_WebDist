@@ -19,7 +19,7 @@ public class AjoutProjetServlet extends HttpServlet {
         String description = request.getParameter("description");
         int categorieId = Integer.parseInt(request.getParameter("categorieId"));
 
-        Projet p = new Projet(ProjetDAO.compteur, nom, description, categorieId);
+        Projet p = new Projet(0, nom, description, categorieId);
         ProjetDAO.ajouter(p);
 
         response.sendRedirect("liste-projets.jsp");

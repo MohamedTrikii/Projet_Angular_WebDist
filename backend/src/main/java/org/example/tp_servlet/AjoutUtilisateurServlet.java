@@ -22,7 +22,7 @@ public class AjoutUtilisateurServlet extends HttpServlet {
         String role = request.getParameter("role");
 
         // Création et ajout de l'utilisateur
-        Utilisateur u = new Utilisateur(UtilisateurDAO.compteur, nom, prenom, email, role);
+        Utilisateur u = new Utilisateur(0, nom, prenom, email, role);
         UtilisateurDAO.ajouter(u);
 
         // Redirection vers la liste des utilisateurs

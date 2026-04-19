@@ -1,4 +1,52 @@
-/* You can add global styles to this file, and also import other style files */
+﻿/* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body { 
+    height: 100%; 
+    background-color: #f3f4f6; /* Modern light gray background for the app */
+}
+
+body { 
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #374151; /* Dark gray for elegant reading */
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* Beautiful cards for tables */
+.mat-elevation-z8,
+.mdc-data-table {
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1) !important;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    background-color: #ffffff; /* Ensure background is white */
+}
+
+/* Fix visibility of table columns and text */
+table {
+    width: 100%;
+    background-color: #ffffff !important;
+}
+
+.mat-mdc-header-cell, .mat-header-cell {
+    color: #374151 !important; /* Dark text for header */
+    font-weight: 600 !important;
+    background-color: #f9fafb !important; /* Light gray header background for contrast */
+}
+
+.mat-mdc-cell, .mat-cell {
+    color: #1f2937 !important; /* Proper text color for reading */
+}
+
+/* Rounded Buttons */
+.mat-mdc-button, 
+.mat-mdc-raised-button {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+}

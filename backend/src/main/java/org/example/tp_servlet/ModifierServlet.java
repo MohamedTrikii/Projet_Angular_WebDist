@@ -29,7 +29,7 @@ public class ModifierServlet extends HttpServlet {
         p.setNom(request.getParameter("nom"));
         p.setPrenom(request.getParameter("prenom"));
         p.setEmail(request.getParameter("email"));
-
+        PersonneDAO.modifier(p);
         response.sendRedirect("index.jsp");
     }
 }

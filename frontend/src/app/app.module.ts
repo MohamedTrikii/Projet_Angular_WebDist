@@ -1,6 +1,5 @@
-import { NgModule } from '@angular/core';
+﻿import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { MatDialogModule } from '@angular/material/dialog';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -8,10 +7,9 @@ import { UsersComponent } from './pages/users/users.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ProjectsComponent } from './pages/projects/projects.component';
 import { AffectationsComponent } from './pages/affectations/affectations.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './auth/login/login.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { ReactiveFormsModule } from '@angular/forms';
 import { DashboardLayoutComponent } from './layout/dashboard-layout/dashboard-layout.component';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,22 +18,21 @@ import { ProjectFormComponent } from './pages/project-form/project-form.componen
 import { AssignmentFormComponent } from './pages/affectation-form/affectation-form.component';
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { CategoryFormComponent } from './pages/categories-form/categories-form.component';
+import { ConfirmComponent } from './confirm/confirm.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
-import { ConfirmComponent } from './confirm/confirm.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-
 
 @NgModule({
   declarations: [
@@ -51,7 +48,7 @@ import { MatButtonModule } from '@angular/material/button';
     AssignmentFormComponent,
     CategoriesComponent,
     CategoryFormComponent,
-    ConfirmComponent,
+    ConfirmComponent
   ],
   imports: [
     BrowserModule,
@@ -59,26 +56,26 @@ import { MatButtonModule } from '@angular/material/button';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    MatDialogModule,
     BrowserAnimationsModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatSelectModule,
     MatOptionModule,
-    MatIconModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatListModule,
-    MatMenuModule,
-    MatSortModule,
-    MatDatepickerModule,
     MatNativeDateModule,
-    MatInputModule,
+    MatDatepickerModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatIconModule,
     MatButtonModule,
+    MatInputModule,
+    MatSidenavModule,
+    MatListModule,
+    MatToolbarModule,
+    MatMenuModule
   ],
   providers: [
-    {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true}
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

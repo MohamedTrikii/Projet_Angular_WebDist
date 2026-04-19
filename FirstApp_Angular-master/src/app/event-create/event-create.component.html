@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Create Event</h2>
+
+<mat-dialog-content [formGroup]="form">
+
+    <mat-form-field>
+        <input matInput placeholder="Title" formControlName="title">
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Place" formControlName="place">
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [formGroup]="form" [rangePicker]="picker">
+            <input matStartDate formControlName="datedebut" placeholder="Start date">
+            <input matEndDate formControlName="datefin" placeholder="End date">
+        </mat-date-range-input>
+        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+
+        <!--<mat-error *ngIf="form.controls.datedebut.hasError('matStartDateInvalid')">Invalid start date</mat-error>-->
+        <!--<mat-error *ngIf="form.controls.datefin.hasError('matEndDateInvalid')">Invalid end date</mat-error>-->
+    </mat-form-field>
+    <p>Selected range: {{form.value.datedebut | date}} – {{form.value.datefin | date}}</p>
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button" (click)="close()">Close</button>
+    <button class="mat-raised-button mat-primary" (click)="save()">Save</button>
+</mat-dialog-actions>

@@ -37,6 +37,8 @@ public class ModifierUtilisateurServlet extends HttpServlet {
         u.setEmail(request.getParameter("email"));
         u.setRole(request.getParameter("role"));
 
+        UtilisateurDAO.modifier(u);
+
         // Redirection vers la liste
         response.sendRedirect("liste-utilisateurs.jsp");
     }

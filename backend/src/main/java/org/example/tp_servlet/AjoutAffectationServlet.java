@@ -20,7 +20,7 @@ public class AjoutAffectationServlet extends HttpServlet {
         String dateDebut = request.getParameter("dateDebut");
         String dateFin = request.getParameter("dateFin");
 
-        Affectation a = new Affectation(AffectationDAO.compteur, utilisateurId, projetId, dateDebut, dateFin);
+        Affectation a = new Affectation(0, utilisateurId, projetId, dateDebut, dateFin);
         AffectationDAO.ajouter(a);
 
         response.sendRedirect("liste-affectations.jsp");

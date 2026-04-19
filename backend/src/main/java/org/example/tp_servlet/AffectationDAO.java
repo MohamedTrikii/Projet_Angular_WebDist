@@ -1,55 +1,51 @@
-package org.example.tp_servlet;
+﻿package org.example.tp_servlet;
 
-import java.util.ArrayList;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import java.util.List;
 
-/**
- * DAO statique pour gérer les opérations CRUD sur les affectations.
- * Stockage en mémoire (liste statique).
- */
 public class AffectationDAO {
-    private static List<Affectation> affectations = new ArrayList<>();
-    static int compteur = 0;
+    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("tp_pu");
 
-    /** Ajouter une affectation */
     public static void ajouter(Affectation a) {
-        affectations.add(a);
-        compteur++;
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(a);
+        em.getTransaction().commit();
+        em.close();
     }
 
-    /** Récupérer toutes les affectations */
     public static List<Affectation> findAll() {
-        return affectations;
+        EntityManager em = emf.createEntityManager();
+        List<Affectation> list = em.createQuery("SELECT a FROM Affectation a", Affectation.class).getResultList();
+        em.close();
+        return list;
     }
 
-    /** Supprimer une affectation par son id */
     public static void supprimer(int id) {
-        affectations.removeIf(a -> a.getId() == id);
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        Affectation a = em.find(Affectation.class, id);
+        if (a != null) {
+            em.remove(a);
+        }
+        em.getTransaction().commit();
+        em.close();
     }
 
-    /** Récupérer une affectation par son id */
     public static Affectation get(int id) {
-        for (Affectation a : affectations) {
-            if (a.getId() == id) return a;
-        }
-        return null;
+        EntityManager em = emf.createEntityManager();
+        Affectation a = em.find(Affectation.class, id);
+        em.close();
+        return a;
     }
 
-    /** Récupérer toutes les affectations d'un projet donné */
-    public static List<Affectation> findByProjet(int projetId) {
-        List<Affectation> result = new ArrayList<>();
-        for (Affectation a : affectations) {
-            if (a.getProjetId() == projetId) result.add(a);
-        }
-        return result;
-    }
-
-    /** Récupérer toutes les affectations d'un utilisateur donné */
-    public static List<Affectation> findByUtilisateur(int utilisateurId) {
-        List<Affectation> result = new ArrayList<>();
-        for (Affectation a : affectations) {
-            if (a.getUtilisateurId() == utilisateurId) result.add(a);
-        }
-        return result;
+    public static void modifier(Affectation a) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.merge(a);
+        em.getTransaction().commit();
+        em.close();
     }
 }

@@ -1,4 +1,4 @@
-﻿package org.example.tp_servlet;
+package org.example.tp_servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -50,7 +50,6 @@ public class CategorieApiServlet extends HttpServlet {
 
         String body = JsonHelper.readBody(request);
         Categorie c = new Categorie();
-        c.setId(CategorieDAO.compteur);
         c.setNom(JsonHelper.getField(body, "name"));
         CategorieDAO.ajouter(c);
 
@@ -72,6 +71,8 @@ public class CategorieApiServlet extends HttpServlet {
         if (c != null) {
             String body = JsonHelper.readBody(request);
             c.setNom(JsonHelper.getField(body, "name"));
+            c.setDescription(JsonHelper.getField(body, "description"));
+            CategorieDAO.modifier(c);
             response.getWriter().print(toJson(c));
         } else {
             response.setStatus(404);

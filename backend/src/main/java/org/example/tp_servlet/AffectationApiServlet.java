@@ -1,4 +1,4 @@
-﻿package org.example.tp_servlet;
+package org.example.tp_servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -50,7 +50,6 @@ public class AffectationApiServlet extends HttpServlet {
 
         String body = JsonHelper.readBody(request);
         Affectation a = new Affectation();
-        a.setId(AffectationDAO.compteur);
         a.setUtilisateurId(JsonHelper.getInt(body, "userId", 0));
         a.setProjetId(JsonHelper.getInt(body, "projectId", 0));
         a.setDateDebut(JsonHelper.getField(body, "start"));
@@ -78,6 +77,7 @@ public class AffectationApiServlet extends HttpServlet {
             a.setProjetId(JsonHelper.getInt(body, "projectId", a.getProjetId()));
             a.setDateDebut(JsonHelper.getField(body, "start"));
             a.setDateFin(JsonHelper.getField(body, "end"));
+            AffectationDAO.modifier(a);
             response.getWriter().print(toJson(a));
         } else {
             response.setStatus(404);

@@ -1,4 +1,4 @@
-﻿package org.example.tp_servlet;
+package org.example.tp_servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -50,7 +50,6 @@ public class ProjetApiServlet extends HttpServlet {
 
         String body = JsonHelper.readBody(request);
         Projet p = new Projet();
-        p.setId(ProjetDAO.compteur);
         p.setNom(JsonHelper.getField(body, "name"));
         p.setDescription(JsonHelper.getField(body, "description"));
         p.setStatus(JsonHelper.getField(body, "status"));
@@ -76,6 +75,7 @@ public class ProjetApiServlet extends HttpServlet {
             p.setNom(JsonHelper.getField(body, "name"));
             p.setDescription(JsonHelper.getField(body, "description"));
             p.setStatus(JsonHelper.getField(body, "status"));
+            ProjetDAO.modifier(p);
             response.getWriter().print(toJson(p));
         } else {
             response.setStatus(404);

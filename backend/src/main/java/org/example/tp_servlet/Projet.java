@@ -1,17 +1,21 @@
-package org.example.tp_servlet;
+﻿package org.example.tp_servlet;
 
-/**
- * Entité Projet représentant un projet de l'entreprise.
- * Chaque projet est lié à une catégorie via categorieId.
- */
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Projet {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nom;
     private String description;
-    private int categorieId; // clé étrangère vers Categorie
+    private int categorieId;
+    private String status;
 
-    public Projet() {
-    }
+    public Projet() {}
 
     public Projet(int id, String nom, String description, int categorieId) {
         this.id = id;
@@ -20,43 +24,14 @@ public class Projet {
         this.categorieId = categorieId;
     }
 
-    // Getters
-    public int getId() {
-        return id;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getCategorieId() {
-        return categorieId;
-    }
-
-    // Setters
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setCategorieId(int categorieId) {
-        this.categorieId = categorieId;
-    }
-
-    // Champ supplémentaire pour l'API Angular
-    private String status;
-
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getNom() { return nom; }
+    public void setNom(String nom) { this.nom = nom; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public int getCategorieId() { return categorieId; }
+    public void setCategorieId(int categorieId) { this.categorieId = categorieId; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 }

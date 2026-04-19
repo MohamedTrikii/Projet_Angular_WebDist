@@ -1,37 +1,51 @@
-package org.example.tp_servlet;
+﻿package org.example.tp_servlet;
 
-import java.util.ArrayList;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import java.util.List;
 
-/**
- * DAO statique pour gérer les opérations CRUD sur les projets.
- * Stockage en mémoire (liste statique).
- */
 public class ProjetDAO {
-    private static List<Projet> projets = new ArrayList<>();
-    static int compteur = 0;
+    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("tp_pu");
 
-    /** Ajouter un projet */
     public static void ajouter(Projet p) {
-        projets.add(p);
-        compteur++;
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(p);
+        em.getTransaction().commit();
+        em.close();
     }
 
-    /** Récupérer tous les projets */
     public static List<Projet> findAll() {
-        return projets;
+        EntityManager em = emf.createEntityManager();
+        List<Projet> list = em.createQuery("SELECT p FROM Projet p", Projet.class).getResultList();
+        em.close();
+        return list;
     }
 
-    /** Supprimer un projet par son id */
     public static void supprimer(int id) {
-        projets.removeIf(p -> p.getId() == id);
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        Projet p = em.find(Projet.class, id);
+        if (p != null) {
+            em.remove(p);
+        }
+        em.getTransaction().commit();
+        em.close();
     }
 
-    /** Récupérer un projet par son id */
     public static Projet get(int id) {
-        for (Projet p : projets) {
-            if (p.getId() == id) return p;
-        }
-        return null;
+        EntityManager em = emf.createEntityManager();
+        Projet p = em.find(Projet.class, id);
+        em.close();
+        return p;
+    }
+
+    public static void modifier(Projet p) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.merge(p);
+        em.getTransaction().commit();
+        em.close();
     }
 }

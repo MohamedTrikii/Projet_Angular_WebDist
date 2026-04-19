@@ -29,6 +29,7 @@ public class ModifierCategorieServlet extends HttpServlet {
         Categorie c = CategorieDAO.get(id);
         c.setNom(request.getParameter("nom"));
         c.setDescription(request.getParameter("description"));
+        CategorieDAO.modifier(c);
         response.sendRedirect("liste-categories.jsp");
     }
 }

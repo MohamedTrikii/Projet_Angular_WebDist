@@ -13,6 +13,7 @@ import { AssignmentFormComponent } from '../affectation-form/affectation-form.co
 @Component({
   selector: 'app-affectations',
   templateUrl: './affectations.component.html',
+  styleUrls: ['./affectations.component.css']
 })
 export class AffectationsComponent implements OnInit {
 

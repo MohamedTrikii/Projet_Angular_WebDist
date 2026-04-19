@@ -1,18 +1,24 @@
-package org.example.tp_servlet;
+﻿package org.example.tp_servlet;
 
-/**
- * Entité Utilisateur représentant un utilisateur du système.
- * Peut avoir le rôle "admin" ou "employe".
- */
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
+
+@Entity
 public class Utilisateur {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nom;
     private String prenom;
     private String email;
-    private String role; // "admin" ou "employe"
+    private String password;
+    private String role;
+    private String category;
 
-    public Utilisateur() {
-    }
+    public Utilisateur() {}
 
     public Utilisateur(int id, String nom, String prenom, String email, String role) {
         this.id = id;
@@ -22,53 +28,17 @@ public class Utilisateur {
         this.role = role;
     }
 
-    // Getters
-    public int getId() {
-        return id;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    // Setters
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    // Champs supplémentaires pour l'API Angular
-    private String password;
-    private String category;
-
-    public String getPassword() { return password; }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getNom() { return nom; }
+    public void setNom(String nom) { this.nom = nom; }
+    public String getPrenom() { return prenom; }
+    public void setPrenom(String prenom) { this.prenom = prenom; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+    public String getPassword() { return (password!=null)?password:""; }
     public void setPassword(String password) { this.password = password; }
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
