@@ -1,9 +1,8 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Affectation } from '../../../models/affectation';
-import { User } from '../../../models/user';
-import { Project } from '../../../models/project';
 import { ApiService } from 'src/services/api.service';
+import { forkJoin } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -20,6 +19,9 @@ export class AffectationsComponent implements OnInit {
   displayedColumns: string[] = ['id', 'userId', 'projectId', 'start', 'end', 'actions'];
 
       dataSource: MatTableDataSource<Affectation> = new MatTableDataSource();
+
+      userNamesById: Record<string, string> = {};
+      projectNamesById: Record<string, string> = {};
     
       @ViewChild(MatPaginator) paginator!: MatPaginator;
       @ViewChild(MatSort) sort!: MatSort;
@@ -42,7 +44,25 @@ export class AffectationsComponent implements OnInit {
       }
     
       ngOnInit(): void {
-        this.fetchAll();
+        this.loadLookups();
+      }
+
+      loadLookups() {
+        forkJoin({
+          users: this.apiService.getUsers(),
+          projects: this.apiService.getProjects(),
+        }).subscribe({
+          next: ({ users, projects }) => {
+            this.userNamesById = this.buildNameLookup(users);
+            this.projectNamesById = this.buildNameLookup(projects);
+
+            this.fetchAll();
+          },
+          error: (error) => {
+            console.warn('Failed to load user/project lookups; showing IDs.', error);
+            this.fetchAll();
+          },
+        });
       }
     
       fetchAll() {
@@ -50,6 +70,23 @@ export class AffectationsComponent implements OnInit {
         this.apiService.getAffectations().subscribe((data) => {
           this.dataSource.data = data;
         });
+      }
+
+      getUserName(userId: string) {
+        return this.userNamesById[userId] ?? userId;
+      }
+
+      getProjectName(projectId: string) {
+        return this.projectNamesById[projectId] ?? projectId;
+      }
+
+      private buildNameLookup(items: Array<{ id?: string; name: string }>) {
+        return items
+          .filter((item): item is { id: string; name: string } => Boolean(item.id))
+          .reduce((acc, item) => {
+            acc[item.id] = item.name;
+            return acc;
+          }, {} as Record<string, string>);
       }
     
       deleteAffectation(id: string) {
