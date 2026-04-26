@@ -81,3 +81,18 @@
     <tr mat-row *matRowDef="let row; columns: ['id','userId','projectId','start','end'];"></tr>
   </table>
 </div>
+
+<!--Dashboard charts-->
+<div class="charts-container">
+  <!--User count by category-->
+  <div class="chart-wrapper">
+    <canvas baseChart [type]="'doughnut'" [datasets]="chartDataDoughnut" [labels]="chartLabelsDoughnut" [options]="chartOptions">
+    </canvas>
+  </div>
+
+  <div class="chart-wrapper">
+    <!--Project status-->
+    <canvas baseChart [type]="'pie'" [datasets]="chartDataPie" [labels]="chartLabelsPie" [options]="chartOptions">
+    </canvas>
+  </div>
+</div>

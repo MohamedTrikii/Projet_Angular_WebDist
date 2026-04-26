@@ -4,6 +4,7 @@ import { User } from 'src/models/user';
 import { Project } from 'src/models/project';
 import { Affectation } from 'src/models/affectation';
 import { ApiService } from 'src/services/api.service';
+import { ChartOptions, ChartDataset } from 'chart.js';
 
 /**
  * Composant Dashboard - affiche les statistiques globales de l'application.
@@ -30,6 +31,23 @@ export class DashboardComponent implements OnInit {
   projectCount = 0;
   affectationCount = 0;
 
+  // Charts data (exemples, à adapter selon les besoins)
+  chartOptions: ChartOptions = {};
+  chartDataDoughnut: ChartDataset[] = [
+    {
+      label: 'Répartition des employés par catégorie',
+      data: []
+    }
+  ]
+  chartLabelsDoughnut: string[] = [];
+
+  chartDataPie: ChartDataset[] = [
+    {
+      data: []
+    }
+  ]
+  chartLabelsPie: string[] = [];
+
   ngOnInit(): void {
     this.loadDashboardData();
   }
@@ -40,6 +58,12 @@ export class DashboardComponent implements OnInit {
     this.apiService.getUsers().subscribe(users => {
       this.users = users;
       this.employeeCount = users.length;
+      const categories = [...new Set(users.map(u => u.category))];
+      this.chartLabelsDoughnut = categories;
+      this.chartDataDoughnut = [{
+        label: 'Répartition des employés par catégorie',
+        data: categories.map(c => users.filter(u => u.category === c).length)
+      }];
     });
 
     // Charger les catégories
@@ -52,6 +76,11 @@ export class DashboardComponent implements OnInit {
     this.apiService.getProjects().subscribe(projects => {
       this.projects = projects;
       this.projectCount = projects.length;
+      const projectStatuses = [...new Set(projects.map(p => p.status))];
+      this.chartLabelsPie = projectStatuses;
+      this.chartDataPie = [{
+        data: projectStatuses.map(status => projects.filter(p => p.status === status).length)
+      }];
     });
 
     // Charger les affectations

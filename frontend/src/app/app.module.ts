@@ -33,6 +33,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NgChartsModule } from 'ng2-charts';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -72,7 +74,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatSidenavModule,
     MatListModule,
     MatToolbarModule,
-    MatMenuModule
+    MatMenuModule,
+    NgChartsModule,
+    MatCardModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
