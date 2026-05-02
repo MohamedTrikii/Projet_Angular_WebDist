@@ -3,6 +3,9 @@ package org.example.tp_servlet;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import org.example.tp_servlet.DAO.UtilisateurDAO;
+import org.example.tp_servlet.Model.Utilisateur;
+
 import java.util.List;
 
 /**
