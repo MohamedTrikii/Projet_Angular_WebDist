@@ -3,9 +3,11 @@ package org.example.tp_servlet.servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import org.example.tp_servlet.DAO.AffectationDAO;
 import org.example.tp_servlet.JsonHelper;
 import org.example.tp_servlet.Model.Affectation;
+import org.example.tp_servlet.service.AffectationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,6 +21,15 @@ import java.util.List;
 @WebServlet("/api/affectations/*")
 public class AffectationApiServlet extends HttpServlet {
 
+    @Autowired
+    private AffectationService affectationService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -30,11 +41,11 @@ public class AffectationApiServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            List<Affectation> affectations = AffectationDAO.findAll();
+            List<Affectation> affectations = affectationService.findAll();
             out.print(toJsonArray(affectations));
         } else {
             int id = Integer.parseInt(pathInfo.substring(1));
-            Affectation a = AffectationDAO.get(id);
+            Affectation a = affectationService.findById(id).orElse(null);
             if (a != null) {
                 out.print(toJson(a));
             } else {
@@ -58,7 +69,7 @@ public class AffectationApiServlet extends HttpServlet {
         a.setProjetId(JsonHelper.getInt(body, "projectId", 0));
         a.setDateDebut(JsonHelper.getField(body, "start"));
         a.setDateFin(JsonHelper.getField(body, "end"));
-        AffectationDAO.ajouter(a);
+        affectationService.save(a);
 
         response.setStatus(201);
         response.getWriter().print(toJson(a));
@@ -73,7 +84,7 @@ public class AffectationApiServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         int id = Integer.parseInt(pathInfo.substring(1));
-        Affectation a = AffectationDAO.get(id);
+        Affectation a = affectationService.findById(id).orElse(null);
 
         if (a != null) {
             String body = JsonHelper.readBody(request);
@@ -81,7 +92,7 @@ public class AffectationApiServlet extends HttpServlet {
             a.setProjetId(JsonHelper.getInt(body, "projectId", a.getProjetId()));
             a.setDateDebut(JsonHelper.getField(body, "start"));
             a.setDateFin(JsonHelper.getField(body, "end"));
-            AffectationDAO.modifier(a);
+            affectationService.save(a);
             response.getWriter().print(toJson(a));
         } else {
             response.setStatus(404);
@@ -98,7 +109,7 @@ public class AffectationApiServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         int id = Integer.parseInt(pathInfo.substring(1));
-        AffectationDAO.supprimer(id);
+        affectationService.deleteById(id);
         response.getWriter().print("{\"message\":\"Affectation supprimee\"}");
     }
 

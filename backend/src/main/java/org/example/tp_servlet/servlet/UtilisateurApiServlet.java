@@ -3,9 +3,11 @@ package org.example.tp_servlet.servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import org.example.tp_servlet.DAO.UtilisateurDAO;
 import org.example.tp_servlet.JsonHelper;
 import org.example.tp_servlet.Model.Utilisateur;
+import org.example.tp_servlet.service.UtilisateurService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,6 +21,15 @@ import java.util.List;
 @WebServlet("/api/users/*")
 public class UtilisateurApiServlet extends HttpServlet {
 
+    @Autowired
+    private UtilisateurService utilisateurService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -30,11 +41,11 @@ public class UtilisateurApiServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            List<Utilisateur> utilisateurs = UtilisateurDAO.findAll();
+            List<Utilisateur> utilisateurs = utilisateurService.findAll();
             out.print(toJsonArray(utilisateurs));
         } else {
             int id = Integer.parseInt(pathInfo.substring(1));
-            Utilisateur u = UtilisateurDAO.get(id);
+            Utilisateur u = utilisateurService.findById(id).orElse(null);
             if (u != null) {
                 out.print(toJson(u));
             } else {
@@ -59,7 +70,7 @@ public class UtilisateurApiServlet extends HttpServlet {
         u.setPassword(JsonHelper.getField(body, "password"));
         u.setRole(JsonHelper.getField(body, "role"));
         u.setCategory(JsonHelper.getField(body, "category"));
-        UtilisateurDAO.ajouter(u);
+        utilisateurService.save(u);
 
         response.setStatus(201);
         response.getWriter().print(toJson(u));
@@ -74,7 +85,7 @@ public class UtilisateurApiServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         int id = Integer.parseInt(pathInfo.substring(1));
-        Utilisateur u = UtilisateurDAO.get(id);
+        Utilisateur u = utilisateurService.findById(id).orElse(null);
 
         if (u != null) {
             String body = JsonHelper.readBody(request);
@@ -84,7 +95,7 @@ public class UtilisateurApiServlet extends HttpServlet {
             if (pwd != null && !pwd.isEmpty()) u.setPassword(pwd);
             u.setRole(JsonHelper.getField(body, "role"));
             u.setCategory(JsonHelper.getField(body, "category"));
-            UtilisateurDAO.modifier(u);
+            utilisateurService.save(u);
             response.getWriter().print(toJson(u));
         } else {
             response.setStatus(404);
@@ -101,7 +112,7 @@ public class UtilisateurApiServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         int id = Integer.parseInt(pathInfo.substring(1));
-        UtilisateurDAO.supprimer(id);
+        utilisateurService.deleteById(id);
         response.getWriter().print("{\"message\":\"Utilisateur supprime\"}");
     }
 

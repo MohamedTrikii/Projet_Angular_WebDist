@@ -3,9 +3,11 @@ package org.example.tp_servlet.servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import org.example.tp_servlet.DAO.ProjetDAO;
 import org.example.tp_servlet.JsonHelper;
 import org.example.tp_servlet.Model.Projet;
+import org.example.tp_servlet.service.ProjetService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,6 +21,15 @@ import java.util.List;
 @WebServlet("/api/projects/*")
 public class ProjetApiServlet extends HttpServlet {
 
+    @Autowired
+    private ProjetService projetService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -30,11 +41,11 @@ public class ProjetApiServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            List<Projet> projets = ProjetDAO.findAll();
+            List<Projet> projets = projetService.findAll();
             out.print(toJsonArray(projets));
         } else {
             int id = Integer.parseInt(pathInfo.substring(1));
-            Projet p = ProjetDAO.get(id);
+            Projet p = projetService.findById(id).orElse(null);
             if (p != null) {
                 out.print(toJson(p));
             } else {
@@ -57,7 +68,7 @@ public class ProjetApiServlet extends HttpServlet {
         p.setNom(JsonHelper.getField(body, "name"));
         p.setDescription(JsonHelper.getField(body, "description"));
         p.setStatus(JsonHelper.getField(body, "status"));
-        ProjetDAO.ajouter(p);
+        projetService.save(p);
 
         response.setStatus(201);
         response.getWriter().print(toJson(p));
@@ -72,14 +83,14 @@ public class ProjetApiServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         int id = Integer.parseInt(pathInfo.substring(1));
-        Projet p = ProjetDAO.get(id);
+        Projet p = projetService.findById(id).orElse(null);
 
         if (p != null) {
             String body = JsonHelper.readBody(request);
             p.setNom(JsonHelper.getField(body, "name"));
             p.setDescription(JsonHelper.getField(body, "description"));
             p.setStatus(JsonHelper.getField(body, "status"));
-            ProjetDAO.modifier(p);
+            projetService.save(p);
             response.getWriter().print(toJson(p));
         } else {
             response.setStatus(404);
@@ -96,7 +107,7 @@ public class ProjetApiServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         int id = Integer.parseInt(pathInfo.substring(1));
-        ProjetDAO.supprimer(id);
+        projetService.deleteById(id);
         response.getWriter().print("{\"message\":\"Projet supprime\"}");
     }
 

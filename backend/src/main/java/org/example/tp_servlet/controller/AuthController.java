@@ -1,73 +1,53 @@
 package org.example.tp_servlet.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-import org.example.tp_servlet.DAO.UtilisateurDAO;
-import org.example.tp_servlet.JsonHelper;
-import org.example.tp_servlet.Model.Utilisateur;
+import org.example.tp_servlet.security.TokenService;
+import org.example.tp_servlet.service.UtilisateurService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
+import java.util.Map;
 
-/**
- * Consolidated controller for Authentication.
- * Handles API REST authentication endpoint (/api/auth/*)
- * POST /api/auth/login - Connexion avec username + password, retourne un token et un rôle.
- * Pour le TP : accepte admin/admin comme identifiants par défaut.
- */
-@WebServlet("/api/auth/*")
-public class AuthController extends HttpServlet {
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:4200")
+public class AuthController {
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        setCorsHeaders(response);
+    private final UtilisateurService utilisateurService;
+    private final TokenService tokenService;
 
-        String pathInfo = request.getPathInfo();
-        if (pathInfo != null && pathInfo.equals("/login")) {
-            String body = JsonHelper.readBody(request);
-            String username = JsonHelper.getField(body, "username");
-            String password = JsonHelper.getField(body, "password");
+    public AuthController(UtilisateurService utilisateurService, TokenService tokenService) {
+        this.utilisateurService = utilisateurService;
+        this.tokenService = tokenService;
+    }
 
-            // Vérifier les identifiants (admin/admin par défaut pour le TP)
-            if ("admin".equals(username) && "admin".equals(password)) {
-                response.getWriter().print("{\"token\":\"admin-token-" + System.currentTimeMillis() + "\",\"role\":\"ADMIN\"}");
-                return;
-            }
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
+        String username = credentials.get("username");
+        String password = credentials.get("password");
 
-            // Vérifier aussi dans la liste des utilisateurs (par email)
-            for (Utilisateur u : UtilisateurDAO.findAll()) {
-                if (u.getEmail() != null && u.getEmail().equals(username) &&
-                    u.getPassword() != null && u.getPassword().equals(password)) {
-                    String role = u.getRole() != null ? u.getRole().toUpperCase() : "USER";
-                    response.getWriter().print(
-                        String.format("{\"token\":\"user-token-%d-%d\",\"role\":\"%s\"}",
-                            u.getId(), System.currentTimeMillis(), JsonHelper.escape(role)));
-                    return;
-                }
-            }
-
-            // Identifiants invalides
-            response.setStatus(401);
-            response.getWriter().print("{\"error\":\"Identifiants invalides\"}");
-        } else {
-            response.setStatus(404);
-            response.getWriter().print("{\"error\":\"Endpoint non trouvé\"}");
+        if ("admin".equals(username) && "admin".equals(password)) {
+            return ResponseEntity.ok(Map.of(
+                    "token", "admin-token-" + System.currentTimeMillis(),
+                    "role", "ADMIN"
+            ));
         }
-    }
 
-    @Override
-    protected void doOptions(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        setCorsHeaders(response);
-        response.setStatus(200);
-    }
-
-    private void setCorsHeaders(HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        return utilisateurService.findByEmail(username)
+                .filter(u -> password != null && password.equals(u.getPassword()))
+                .map(u -> {
+                    String token = tokenService.createToken(u);
+                    String role = u.getRole() != null ? u.getRole().toUpperCase() : "USER";
+                    return ResponseEntity.ok(Map.of(
+                            "token", token,
+                            "role", role
+                    ));
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "Identifiants invalides")));
     }
 }

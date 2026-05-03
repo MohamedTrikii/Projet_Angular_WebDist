@@ -3,9 +3,11 @@ package org.example.tp_servlet.servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import org.example.tp_servlet.DAO.CategorieDAO;
 import org.example.tp_servlet.JsonHelper;
 import org.example.tp_servlet.Model.Categorie;
+import org.example.tp_servlet.service.CategorieService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,6 +21,15 @@ import java.util.List;
 @WebServlet("/api/categories/*")
 public class CategorieApiServlet extends HttpServlet {
 
+    @Autowired
+    private CategorieService categorieService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -30,11 +41,11 @@ public class CategorieApiServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            List<Categorie> categories = CategorieDAO.findAll();
+            List<Categorie> categories = categorieService.findAll();
             out.print(toJsonArray(categories));
         } else {
             int id = Integer.parseInt(pathInfo.substring(1));
-            Categorie c = CategorieDAO.get(id);
+            Categorie c = categorieService.findById(id).orElse(null);
             if (c != null) {
                 out.print(toJson(c));
             } else {
@@ -55,7 +66,7 @@ public class CategorieApiServlet extends HttpServlet {
         String body = JsonHelper.readBody(request);
         Categorie c = new Categorie();
         c.setNom(JsonHelper.getField(body, "name"));
-        CategorieDAO.ajouter(c);
+        categorieService.save(c);
 
         response.setStatus(201);
         response.getWriter().print(toJson(c));
@@ -70,13 +81,13 @@ public class CategorieApiServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         int id = Integer.parseInt(pathInfo.substring(1));
-        Categorie c = CategorieDAO.get(id);
+        Categorie c = categorieService.findById(id).orElse(null);
 
         if (c != null) {
             String body = JsonHelper.readBody(request);
             c.setNom(JsonHelper.getField(body, "name"));
             c.setDescription(JsonHelper.getField(body, "description"));
-            CategorieDAO.modifier(c);
+            categorieService.save(c);
             response.getWriter().print(toJson(c));
         } else {
             response.setStatus(404);
@@ -93,7 +104,7 @@ public class CategorieApiServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         int id = Integer.parseInt(pathInfo.substring(1));
-        CategorieDAO.supprimer(id);
+        categorieService.deleteById(id);
         response.getWriter().print("{\"message\":\"Categorie supprimee\"}");
     }
 

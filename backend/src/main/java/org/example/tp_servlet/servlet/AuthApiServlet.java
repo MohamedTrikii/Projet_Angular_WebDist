@@ -3,9 +3,12 @@ package org.example.tp_servlet.servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import org.example.tp_servlet.DAO.UtilisateurDAO;
 import org.example.tp_servlet.JsonHelper;
 import org.example.tp_servlet.Model.Utilisateur;
+import org.example.tp_servlet.security.TokenService;
+import org.example.tp_servlet.service.UtilisateurService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 
@@ -16,6 +19,18 @@ import java.io.IOException;
  */
 @WebServlet("/api/auth/*")
 public class AuthApiServlet extends HttpServlet {
+
+    @Autowired
+    private UtilisateurService utilisateurService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -36,21 +51,22 @@ public class AuthApiServlet extends HttpServlet {
                 return;
             }
 
-            // Vérifier aussi dans la liste des utilisateurs (par email)
-            for (Utilisateur u : UtilisateurDAO.findAll()) {
-                if (u.getEmail() != null && u.getEmail().equals(username) &&
-                    u.getPassword() != null && u.getPassword().equals(password)) {
+            boolean authenticated = false;
+            if (utilisateurService.findByEmail(username).isPresent()) {
+                Utilisateur u = utilisateurService.findByEmail(username).get();
+                if (u.getPassword() != null && u.getPassword().equals(password)) {
+                    String token = tokenService.createToken(u);
                     String role = u.getRole() != null ? u.getRole().toUpperCase() : "USER";
                     response.getWriter().print(
-                        String.format("{\"token\":\"user-token-%d-%d\",\"role\":\"%s\"}",
-                            u.getId(), System.currentTimeMillis(), JsonHelper.escape(role)));
-                    return;
+                            String.format("{\"token\":\"%s\",\"role\":\"%s\"}",
+                                    JsonHelper.escape(token), JsonHelper.escape(role)));
+                    authenticated = true;
                 }
             }
-
-            // Identifiants invalides
-            response.setStatus(401);
-            response.getWriter().print("{\"error\":\"Identifiants invalides\"}");
+            if (!authenticated) {
+                response.setStatus(401);
+                response.getWriter().print("{\"error\":\"Identifiants invalides\"}");
+            }
         } else {
             response.setStatus(404);
             response.getWriter().print("{\"error\":\"Endpoint non trouvé\"}");
